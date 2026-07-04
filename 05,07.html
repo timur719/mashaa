@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>I Love You ❤️</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2 + 40;
+  const scale = Math.min(canvas.width, canvas.height) / 22;
+
+  const total = 600;
+  let i = 0;
+
+  const colors = ['#ff0066', '#ff3399', '#ff66bb', '#ff99cc', '#ffccee'];
+
+  function draw() {
+    if (i >= total) return;
+
+    const t = i / 20;
+
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+
+    const px = cx + x * scale;
+    const py = cy + y * scale;
+
+    ctx.font = `bold ${Math.max(7, scale * 0.55)}px Arial`;
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.shadowColor = '#ff0066';
+    ctx.shadowBlur = 8;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('I love you', px, py);
+
+    i++;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    i = 0;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw();
+  });
+</script>
+</body>
+</html>

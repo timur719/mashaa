@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>С днем рождения, Машенька</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .page {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #0f0520 0%, #1e0a3c 30%, #2d1b4e 60%, #1a0a2e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2.5rem 1.5rem 4rem;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  canvas#stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 2; width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 2rem; }
+
+  /* HERO */
+  .hero {
+    background: rgba(255,255,255,0.055);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,200,150,0.28);
+    border-radius: 28px;
+    padding: 3rem 2.5rem 2.5rem;
+    text-align: center;
+  }
+
+  .balloon-row {
+    display: flex; justify-content: center; gap: 6px;
+    margin-bottom: 1.6rem; font-size: 2rem;
+  }
+  .balloon-row span {
+    display: inline-block;
+    animation: bob var(--d,3s) ease-in-out infinite;
+    animation-delay: var(--dl,0s);
+  }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(255,180,100,0.18);
+    color: #f9c97c;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,180,100,0.3);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 0 40px rgba(249,201,124,0.3);
+  }
+
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: #f9c97c;
+    margin-bottom: 2rem;
+  }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 1.4rem 0;
+  }
+  .divider-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,200,150,0.4), transparent);
+  }
+  .divider-gem { color: #f9c97c; font-size: 0.9rem; }
+
+  .hero-msg {
+    font-size: 1.08rem;
+    line-height: 1.95;
+    color: rgba(255,255,255,0.88);
+  }
+  .hl { color: #f9c97c; font-family: 'Playfair Display', serif; font-style: italic; }
+
+  /* CARDS GRID */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .card {
+    background: rgba(255,255,255,0.055);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,200,150,0.2);
+    border-radius: 20px;
+    padding: 1.6rem 1.4rem;
+    text-align: center;
+  }
+
+  .card-icon { font-size: 2.2rem; margin-bottom: 0.7rem; }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f9c97c;
+    margin-bottom: 0.6rem;
+  }
+  .card-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.78);
+  }
+
+  /* POEM BLOCK */
+  .poem-block {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(249,201,124,0.25);
+    border-radius: 20px;
+    padding: 2.2rem 2rem;
+    text-align: center;
+  }
+  .poem-label {
+    display: inline-block;
+    color: rgba(249,201,124,0.6);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+  .poem-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 2.1;
+    color: rgba(255,255,255,0.9);
+  }
+  .poem-text em { color: #f9c97c; font-style: normal; }
+
+  /* WISHES LIST */
+  .wishes-block {
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,200,150,0.2);
+    border-radius: 20px;
+    padding: 2rem 1.8rem;
+  }
+  .wishes-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f9c97c;
+    text-align: center;
+    margin-bottom: 1.4rem;
+  }
+  .wish-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255,200,150,0.1);
+  }
+  .wish-item:last-child { border-bottom: none; }
+  .wish-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+  .wish-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.82);
+  }
+  .wish-text strong { color: #f9c97c; font-weight: 500; }
+
+  /* LETTER BLOCK */
+  .letter-block {
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,200,150,0.22);
+    border-radius: 20px;
+    padding: 2.2rem 2rem;
+  }
+  .letter-greeting {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #f9c97c;
+    margin-bottom: 1.2rem;
+  }
+  .letter-body {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 1.4rem;
+  }
+  .letter-sign {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.55);
+    text-align: right;
+  }
+
+  /* BOTTOM */
+  .bottom {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(249,201,124,0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .bottom-heart { font-size: 3rem; animation: pulse 2s ease-in-out infinite; margin-bottom: 1rem; }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
+  .bottom-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.8;
+    margin-bottom: 1.6rem;
+  }
+
+  .btn {
+    background: rgba(255,180,100,0.15);
+    border: 1px solid rgba(255,180,100,0.4);
+    color: #f9c97c;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    padding: 12px 28px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: rgba(255,180,100,0.3); }
+
+  
+  .confetti-piece {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 22px;
+  animation: fall linear forwards;
+  user-select: none;
+
+  }
+  @keyframes fall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(800deg); opacity: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero-name { font-size: 2.2rem; }
+  }
+</style>
+  </head>
+  <body>
+<div class="page">
+  <canvas id="stars"></canvas>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="balloon-row">
+        <span style="--d:2.8s;--dl:0s">🎈</span>
+        <span style="--d:3.1s;--dl:0.2s">🌸</span>
+        <span style="--d:2.5s;--dl:0.4s">🎂</span>
+        <span style="--d:3.3s;--dl:0.1s">💐</span>
+        <span style="--d:2.7s;--dl:0.5s">🎈</span>
+      </div>
+      <div class="tag">✦ С Днём Рождения ✦</div>
+      <div class="hero-name">Любимая</div>
+      <div class="hero-sub">самый особенный день в году</div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-gem">♡</div><div class="divider-line"></div></div>
+      <div class="hero-msg">
+        Сегодня весь мир немного <span class="hl">красивее</span> — просто потому,<br>
+        что именно в этот день ты появилась на свет.<br><br>
+        Ты — моя <span class="hl">самая любимая девочка</span> во вселенной,<br>
+        и я бесконечно рад, что ты есть в моей жизни.
+      </div>
+    </div>
+
+    <!-- GRID CARDS -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🌹</div>
+        <div class="card-title">Красота</div>
+        <div class="card-text">Ты прекрасна в каждый момент — когда смеёшься, когда молчишь, когда просто рядом.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">✨</div>
+        <div class="card-title">Свет</div>
+        <div class="card-text">Ты освещаешь мои дни так, как никто другой, ты стала для меня светом в жизни.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🦋</div>
+        <div class="card-title">Нежность</div>
+        <div class="card-text">Твоя нежность — это дар. Ты самая нежная девочка которую я когда либо видел.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌙</div>
+        <div class="card-title">Волшебство</div>
+        <div class="card-text">Быть рядом с тобой — это настоящее волшебство, которое я не устану ценить.</div>
+      </div>
+    </div>
+
+    <!-- POEM -->
+    <div class="poem-block">
+      
+      <div class="poem-text">
+        Ты — как весна среди зимы,<br>
+        Как первый луч в рассветный час.<br>
+        <em>Я так люблю тебя</em>, и мы —<br>
+        Две части целого сейчас.<br><br>
+        Пусть этот день тебе несёт<br>
+        Тепло, улыбки и цветы.<br>
+        Пусть счастье к двери постучит<br>
+        И <em>никогда не уйдёт</em> от тебя.
+      </div>
+    </div>
+
+    <!-- WISHES -->
+    <div class="wishes-block">
+      <div class="wishes-title">🎁 Мои пожелания тебе</div>
+
+      <div class="wish-item">
+        <div class="wish-icon">💛</div>
+        <div class="wish-text"><strong>Счастья</strong> — настоящего, тёплого, такого, которое живёт внутри и не зависит ни от чего снаружи.</div>
+      </div>
+      <div class="wish-item">
+        <div class="wish-icon">🌺</div>
+        <div class="wish-text"><strong>Здоровья</strong> — крепкого и стойкого, чтобы ты могла наслаждаться каждым днём в полную силу.</div>
+      </div>
+      <div class="wish-item">
+        <div class="wish-icon">🚀</div>
+        <div class="wish-text"><strong>Смелости</strong> — идти за мечтами без страха, потому что ты заслуживаешь всего самого лучшего.</div>
+      </div>
+      <div class="wish-item">
+        <div class="wish-icon">🌊</div>
+        <div class="wish-text"><strong>Приключений</strong> — новых мест, незабываемых моментов и историй, которые захочется рассказывать снова и снова.</div>
+      </div>
+      <div class="wish-item">
+        <div class="wish-icon">🤗</div>
+        <div class="wish-text"><strong>Любви</strong> — окружённой теплом близких людей, которые любят тебя так же сильно, как я.</div>
+      </div>
+      
+    </div>
+
+    <!-- LETTER -->
+    <div class="letter-block">
+      <div class="letter-greeting">Моя любимая Машенька,</div>
+      <div class="letter-body">
+        Я хочу, чтобы ты знала: каждый день рядом с тобой — это подарок, который я безумно ценю. Ты делаешь мою жизнь лучше, ярче и осмысленнее просто своим присутсвием в ней.<br><br>
+        В твой день рождения я хочу сказать громко и с гордостью: <span class="hl">Я ЛЮБЛЮ ТЕБЯ</span>. Люблю твой смех, твои мысли, твою заботу, твои маленькие поступки и большое сердце.
+        Спасибо тебе огромное за то что есть в моей жизни.<br><br>
+        Пусть этот год станет для тебя годом роста, радости и новых открытий. А я буду рядом — всегда,не смотря ни на что.
+      </div>
+      <div class="letter-sign">Твой Тимурчик💛</div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="bottom">
+      <div class="bottom-heart">💖</div>
+      <div class="bottom-text">
+        "Есть люди, которые врываются в жизнь как праздник.<br>
+        Ты — именно такой человек для меня,любимая."
+      </div>
+      <button class="btn" onclick="launchConfetti()">🎉 Показать мою любовь к тебе!</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+const stars = Array.from({length: 150}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * 1.3 + 0.3,
+  a: Math.random(),
+  speed: Math.random() * 0.007 + 0.002,
+  phase: Math.random() * Math.PI * 2
+}));
+function draw(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    const alpha = s.a * (0.4 + 0.6 * Math.sin(t * s.speed + s.phase));
+    ctx.beginPath();
+    ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,220,180,${alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw(0);
+
+function launchConfetti() {
+  const hearts = ['❤️','💖','💗','💕','💘','💝'];
+
+  for (let i = 0; i < 120; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'confetti-piece';
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.top = '-30px';
+    heart.style.animationDuration = (2 + Math.random() * 3) + 's';
+    heart.style.animationDelay = (Math.random() * 1) + 's';
+    heart.style.transform = `rotate(${Math.random()*360}deg)`;
+    heart.style.fontSize = (18 + Math.random() * 18) + 'px';
+
+    document.body.appendChild(heart);
+
+    heart.addEventListener('animationend', () => heart.remove());
+  }
+}
+</script>
+</body>
+</html>
